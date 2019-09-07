@@ -34,11 +34,11 @@ def load_cgm_data(in_num, train_set_ratio):
 
     return x[:int(len(x)*train_set_ratio)], x[int(len(x)*train_set_ratio):],\
            y[:int(len(y)*train_set_ratio)], y[int(len(y)*train_set_ratio):],\
-           trans[int(len(y)*train_set_ratio)+10:]
+           trans[int(len(y)*train_set_ratio)+in_num:]
 
 
 def main():
-    train_x, test_x, train_y, test_y, trans = load_cgm_data(10, 0.95)
+    train_x, test_x, train_y, test_y, trans = load_cgm_data(150, 0.95)
     print(test_y)
     print(trans)
 
@@ -86,7 +86,8 @@ def main():
 
         axes.legend(loc='upper center', bbox_to_anchor=(0.5, 1.1),
                         ncol=1, fancybox=True, shadow=True)
-    print(mean_squared_error(test_y, svr.predict(test_x)))
+    # print(mean_squared_error(test_y, svr.predict(test_x)))
+    print(mean_squared_error(test_y, np.zeros(len(test_y))))
     fig.text(0.5, 0.04, 'index', ha='center', va='center')
     fig.text(0.06, 0.5, 'concentration', ha='center', va='center', rotation='vertical')
     fig.suptitle("Support Vector Regression", fontsize=14)

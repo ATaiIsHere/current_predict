@@ -16,7 +16,7 @@ def load_cgm_data():
 
     offset_currents = np.append(np.zeros(indices[0]), currents)
 
-    x, y = [],[]
+    x, y = [], []
 
     for i in range(len(starts)):
         if ends[i] - starts[i] >= 0:
