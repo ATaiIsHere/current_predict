@@ -5,21 +5,17 @@ from pykalman import KalmanFilter
 kf = KalmanFilter(transition_covariance=0.18, observation_covariance=1)
 
 
-def load_cgm_data(filename, col_name):
-    df = pd.read_csv(filename, encoding='utf-8')
-    return load_cgm_data(df, col_name)
+def load_cgm_data(col_name, df=None, filename=None):
+    if df is None:
+        df = pd.read_csv(filename, encoding='utf-8')
 
-
-def load_cgm_data(df, col_name):
     indices = np.array(df['index'].to_list())
     col_datas = np.array(df[col_name].to_list())
 
     return np.append(np.zeros(indices[0]), col_datas)
 
 
-def parse_data(data, data_range, in_num, set_ratio):
-    data = min_max_normalize(data[data_range[0]:data_range[1] + 1])
-
+def parse_data(data, in_num, testing_range=None):
     x, y = np.array([]), np.array([])
 
     for i in range(len(data) - in_num):
@@ -28,12 +24,26 @@ def parse_data(data, data_range, in_num, set_ratio):
 
     x = np.array(x).reshape(int(len(x) / in_num), in_num)
 
-    return x[:int(len(x) * set_ratio)], x[int(len(x) * set_ratio):], \
-           y[:int(len(y) * set_ratio)], y[int(len(y) * set_ratio):]
+    return np.append(x[:testing_range[0]-in_num], x[testing_range[1]-in_num+1:], axis=0), \
+           x[testing_range[0]-in_num:testing_range[1]-in_num+1], \
+           np.append(y[:testing_range[0]-in_num], y[testing_range[1]-in_num+1:], axis=0), \
+           y[testing_range[0]-in_num:testing_range[1]-in_num+1]
 
 
 def min_max_normalize(data):
-    return (data - np.min(data)) / (np.max(data) - np.min(data))
+    return min_max_normalize(data, np.min(data), np.max(data))
+
+
+def min_max_normalize(data, data_min, data_max):
+    return (data - data_min) / (data_max - data_min)
+
+
+def normalize_inverse(data, data_min, data_max):
+    return data * (data_max - data_min) + data_min
+
+
+def currents_to_glucose(currents, a, b):
+    return currents * a + b
 
 
 def kalman_filter(measurements):

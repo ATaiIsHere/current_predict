@@ -38,7 +38,7 @@ def load_cgm_data(in_num, train_set_ratio):
 
 
 def main():
-    train_x, test_x, train_y, test_y, trans = load_cgm_data(150, 0.95)
+    train_x, test_x, train_y, test_y, trans = load_cgm_data(15, 0.95)
     print(test_y)
     print(trans)
 
